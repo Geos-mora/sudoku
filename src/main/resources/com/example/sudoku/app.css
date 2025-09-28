@@ -1,0 +1,36 @@
+.containerHead{
+    -fx-border-color:black;
+    -fx-alignment:center;
+    -fx-pref-height:50;
+}
+.containerFooter{
+    -fx-border-color:blue;
+    -fx-alignment:center;
+}
+
+.containerTablero{
+    -fx-border-color:red;
+    -fx-alignment:center;
+    -fx-padding:20;
+}
+
+.containerTablero .grid-board {
+     -fx-background-color: #f0f0f0;
+     -fx-border-color: #333333;
+     -fx-border-width: 1;
+     -fx-padding: 30;
+     -fx-hgap: 3;
+     -fx-vgap: 3;
+     -fx-pref-width:400;
+     -fx-pref-height:400;
+ }
+/*estilo para cada uno de los textFields*/
+ .cell{
+    -fx-pref-width:50;
+    -fx-pref-height:50;
+    -fx-alignment:center;
+    -fx-font-size:18;
+    -fx-font-width:bold;
+    -fx-background-color: white;
+    -fx-border-color: #bbb;
+ }
