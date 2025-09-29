@@ -8,29 +8,34 @@
     -fx-alignment:center;
 }
 
-.containerTablero{
+.containerBoard{
     -fx-border-color:red;
     -fx-alignment:center;
     -fx-padding:20;
 }
 
-.containerTablero .grid-board {
-     -fx-background-color: #f0f0f0;
-     -fx-border-color: #333333;
-     -fx-border-width: 1;
-     -fx-padding: 30;
-     -fx-hgap: 3;
-     -fx-vgap: 3;
-     -fx-pref-width:400;
-     -fx-pref-height:400;
+.containerBoard .grid-bloques {
+     -fx-background-color: #141414;
+     -fx-padding:1;
+     -fx-hgap: 2;
+     -fx-vgap: 2;
+     -fx-max-height:300;
+     -fx-min-width:300;
+     -fx-alignment:center;
  }
+
+ .containerBoard .grid-bloques .grid-board {
+      -fx-background-color: #C9C9C9;
+      -fx-alignment:center;
+  }
 /*estilo para cada uno de los textFields*/
  .cell{
-    -fx-pref-width:50;
-    -fx-pref-height:50;
+    -fx-pref-width:60;
+    -fx-pref-height:60;
     -fx-alignment:center;
     -fx-font-size:18;
     -fx-font-width:bold;
-    -fx-background-color: white;
+    -fx-background-color: #F5FCFF;
     -fx-border-color: #bbb;
+    -fx-border-width:1;
  }
