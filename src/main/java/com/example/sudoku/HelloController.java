@@ -51,8 +51,9 @@ public class HelloController {
                             int fila=(int)cell.getProperties().get("fila");
                             int columna=(int)cell.getProperties().get("col");
 
+                            /*funcion para resaltar celdas*/
+                            highlightColumn(columna,fila);
 
-                            highlightColumn(columna);
                             System.out.println("Click en fila=" + fila + " col=" + columna);
                             GridPane padre=(GridPane) cell.getParent();
 
@@ -82,8 +83,8 @@ public class HelloController {
     }
 
 
-    private void highlightColumn(int colSel) {
-        // 1. limpiar estilos previos
+    private void highlightColumn(int columnaSeleccionada, int filaSeleccionada) {
+        /* limpiar estilos previos*/
         for (Node bloque : gridContainer.getChildren()) {
             if (bloque instanceof GridPane) {
                 GridPane gridHijo = (GridPane) bloque;
@@ -96,7 +97,7 @@ public class HelloController {
             }
         }
 
-        // 2. recorrer otra vez y pintar los de la columna seleccionada
+
         for (Node bloque : gridContainer.getChildren()) {
             if (bloque instanceof GridPane) {
                 GridPane gridHijo = (GridPane) bloque;
@@ -105,7 +106,11 @@ public class HelloController {
                     if (subHijo instanceof TextField) {
                         TextField tf = (TextField) subHijo;
                         Integer col = (Integer) tf.getProperties().get("col");
-                        if (col != null && col == colSel) {
+                        Integer fila=(Integer)  tf.getProperties().get("fila");
+                        if (col != null && col == columnaSeleccionada) {
+                            tf.setStyle("-fx-background-color: lightblue;");
+                        }
+                        if (fila!=null && fila==filaSeleccionada){
                             tf.setStyle("-fx-background-color: lightblue;");
                         }
                     }
