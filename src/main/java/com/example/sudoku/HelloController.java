@@ -2,6 +2,8 @@ package com.example.sudoku;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -20,6 +22,14 @@ public class HelloController {
     @FXML
     private GridPane gridContainer;
 
+    int[][] sudokuTabla = {
+            {0, 2, 0, 4, 0, 6},
+            {4, 0, 6, 0, 2, 0},
+            {0, 3, 0, 5, 0, 1},
+            {5, 0, 1, 0, 3, 0},
+            {0, 4, 0, 6, 0, 2},
+            {6, 0, 2, 0, 4, 0}
+    };
 
 
     @FXML
@@ -46,6 +56,8 @@ public class HelloController {
                         cell.getProperties().put("col", cGlobal);
                         cell.setId("celda_" + rGlobal + "_" + cGlobal);
                         grid.add(cell,col,row);
+                        iniciarTabla(sudokuTabla);
+                        eventoMouse(gridContainer );
 
                         cell.setOnMouseClicked(event->{
                             int fila=(int)cell.getProperties().get("fila");
@@ -54,6 +66,7 @@ public class HelloController {
                             /*funcion para resaltar celdas*/
                             highlightColumn(columna,fila);
 
+
                             System.out.println("Click en fila=" + fila + " col=" + columna);
                             GridPane padre=(GridPane) cell.getParent();
 
@@ -61,7 +74,6 @@ public class HelloController {
                                  if (hijo instanceof TextField){
                                      TextField tf=(TextField) hijo;
                                      tf.setStyle("-fx-background-color: lightblue;");
-
 
 
                                  }
@@ -113,6 +125,7 @@ public class HelloController {
                         if (fila!=null && fila==filaSeleccionada){
                             tf.setStyle("-fx-background-color: lightblue;");
                         }
+
                     }
                 }
             }
@@ -131,6 +144,45 @@ public class HelloController {
         tf.getStyleClass().add("cell");
 
         return tf;
+    }
+
+    private void iniciarTabla(int [][] tabla ){
+        for (Node bloque : gridContainer.getChildren()) {
+            if (bloque instanceof GridPane) {
+                GridPane gridHijo = (GridPane) bloque;
+
+                for (Node subHijo : gridHijo.getChildren()) {
+                    if (subHijo instanceof TextField) {
+                        TextField tf=(TextField) subHijo;
+                        Integer col=(Integer) tf.getProperties().get("col");
+                        Integer fila=(Integer) tf.getProperties().get("fila");
+
+                        if (fila == null || col == null) continue;
+
+                        int v=tabla[fila][col];
+                        tf.setText(v==0? "" : Integer.toString(v));
+                        tf.setEditable(v == 0); /* Code to change the text fields when the mouse is over them */
+
+                    }
+                }
+            }
+        }
+    }
+
+    private void eventoMouse(Parent padre){
+           for (Node nodo: padre.getChildrenUnmodifiable()){
+               if (nodo instanceof TextField){
+                   TextField tf=(TextField) nodo;
+                   tf.setOnMouseEntered(event->{
+                       tf.getStyleClass().add("hover");
+                   });
+                   tf.setOnMouseExited(event->{
+                       tf.getStyleClass().remove("hover");
+                   });
+               }else if (nodo instanceof Parent){
+                   eventoMouse((Parent) nodo);
+               }
+           }
     }
 
 

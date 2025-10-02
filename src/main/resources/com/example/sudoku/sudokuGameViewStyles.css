@@ -39,3 +39,7 @@
     -fx-border-color: #bbb;
     -fx-border-width:1;
  }
+
+.hover{
+    -fx-background-color: #41E0C3;
+}
