@@ -17,7 +17,6 @@ public class HelloController {
     private int colGrid=2;
     private int rowBlock=2;
     private int colBlock=3;
-    private  int contador=1;
 
     @FXML
     private GridPane gridContainer;
@@ -42,8 +41,6 @@ public class HelloController {
                 GridPane grid=makeBloque(r,c);
                 gridContainer.add(grid,c,r);
 
-
-
                 for (int row=0; row<rowBlock; row++){
                     for (int col=0; col<colBlock; col++){
                         TextField cell=makeCell(row,col);
@@ -56,15 +53,16 @@ public class HelloController {
                         cell.getProperties().put("col", cGlobal);
                         cell.setId("celda_" + rGlobal + "_" + cGlobal);
                         grid.add(cell,col,row);
-                        iniciarTabla(sudokuTabla);
-                        eventoMouse(gridContainer );
+                        int fila=(int)cell.getProperties().get("fila");
+                        int columna=(int)cell.getProperties().get("col");
 
+
+                        /**/
                         cell.setOnMouseClicked(event->{
-                            int fila=(int)cell.getProperties().get("fila");
-                            int columna=(int)cell.getProperties().get("col");
+
 
                             /*funcion para resaltar celdas*/
-                            highlightColumn(columna,fila);
+                            sombrearFilaColumna(gridContainer,columna,fila);
 
 
                             System.out.println("Click en fila=" + fila + " col=" + columna);
@@ -73,7 +71,7 @@ public class HelloController {
                             for (Node hijo: padre.getChildren()){
                                  if (hijo instanceof TextField){
                                      TextField tf=(TextField) hijo;
-                                     tf.setStyle("-fx-background-color: lightblue;");
+                                     tf.setStyle("-fx-background-color: #41E0C3;");
 
 
                                  }
@@ -84,7 +82,8 @@ public class HelloController {
 
                     }
                 }
-
+                iniciarTabla(gridContainer,sudokuTabla);
+                eventoMouse(gridContainer );
 
 
 
@@ -95,39 +94,35 @@ public class HelloController {
     }
 
 
-    private void highlightColumn(int columnaSeleccionada, int filaSeleccionada) {
-        /* limpiar estilos previos*/
-        for (Node bloque : gridContainer.getChildren()) {
-            if (bloque instanceof GridPane) {
-                GridPane gridHijo = (GridPane) bloque;
-
-                for (Node subHijo : gridHijo.getChildren()) {
-                    if (subHijo instanceof TextField) {
-                        subHijo.setStyle(""); // limpiar colores
-                    }
-                }
+    private void sombrearFilaColumna(Parent padre, int columnaSeleccionada, int filaSeleccionada) {
+        /* clear previous styles */
+        for (Node node : padre.getChildrenUnmodifiable()) {
+            if (node instanceof TextField) {
+                TextField tf = (TextField) node;
+                tf.setStyle("");
+            }else if (node instanceof Parent){
+                sombrearFilaColumna((Parent) node,columnaSeleccionada,filaSeleccionada);
             }
         }
 
+        /*highlight the row and column of the selected cell*/
+        for (Node node : padre.getChildrenUnmodifiable()) {
+            if (node instanceof TextField) {
+                TextField tf = (TextField) node;
+                Integer col = (Integer) tf.getProperties().get("col");
+                Integer fila=(Integer)  tf.getProperties().get("fila");
 
-        for (Node bloque : gridContainer.getChildren()) {
-            if (bloque instanceof GridPane) {
-                GridPane gridHijo = (GridPane) bloque;
 
-                for (Node subHijo : gridHijo.getChildren()) {
-                    if (subHijo instanceof TextField) {
-                        TextField tf = (TextField) subHijo;
-                        Integer col = (Integer) tf.getProperties().get("col");
-                        Integer fila=(Integer)  tf.getProperties().get("fila");
-                        if (col != null && col == columnaSeleccionada) {
-                            tf.setStyle("-fx-background-color: lightblue;");
-                        }
-                        if (fila!=null && fila==filaSeleccionada){
-                            tf.setStyle("-fx-background-color: lightblue;");
-                        }
+                if (col != null && col == columnaSeleccionada) {
+                    tf.setStyle("-fx-background-color: #41E0C3;");
 
-                    }
                 }
+                if (fila!=null && fila==filaSeleccionada){
+                    tf.setStyle("-fx-background-color: #41E0C3;");
+                }
+
+            }else if (node instanceof Parent){
+                sombrearFilaColumna((Parent) node, columnaSeleccionada,filaSeleccionada);
             }
         }
     }
@@ -146,39 +141,42 @@ public class HelloController {
         return tf;
     }
 
-    private void iniciarTabla(int [][] tabla ){
-        for (Node bloque : gridContainer.getChildren()) {
-            if (bloque instanceof GridPane) {
-                GridPane gridHijo = (GridPane) bloque;
+    private void iniciarTabla(Parent padre, int [][] tabla ){
+        for (Node nodo: padre.getChildrenUnmodifiable()){
+            if (nodo instanceof TextField){
+                TextField tf=(TextField)nodo;
+                Integer col=(Integer) tf.getProperties().get("col");
+                Integer fila=(Integer) tf.getProperties().get("fila");
 
-                for (Node subHijo : gridHijo.getChildren()) {
-                    if (subHijo instanceof TextField) {
-                        TextField tf=(TextField) subHijo;
-                        Integer col=(Integer) tf.getProperties().get("col");
-                        Integer fila=(Integer) tf.getProperties().get("fila");
+                if (fila == null || col == null) continue;
 
-                        if (fila == null || col == null) continue;
+                int v=tabla[fila][col];
+                tf.setText(v==0? "" : Integer.toString(v));
+                tf.setEditable(v == 0);
 
-                        int v=tabla[fila][col];
-                        tf.setText(v==0? "" : Integer.toString(v));
-                        tf.setEditable(v == 0); /* Code to change the text fields when the mouse is over them */
-
-                    }
+                tf.getStyleClass().remove("given");
+                if (v!=0 && !tf.getStyleClass().contains("given")){
+                    tf.getStyleClass().add("given");
                 }
+
+            }else if (nodo instanceof Parent){
+                iniciarTabla((Parent) nodo, tabla );
             }
         }
     }
-
+    /* funtion to change the color textfields when the mouse is over them */
     private void eventoMouse(Parent padre){
            for (Node nodo: padre.getChildrenUnmodifiable()){
                if (nodo instanceof TextField){
                    TextField tf=(TextField) nodo;
-                   tf.setOnMouseEntered(event->{
-                       tf.getStyleClass().add("hover");
-                   });
-                   tf.setOnMouseExited(event->{
-                       tf.getStyleClass().remove("hover");
-                   });
+
+                       tf.setOnMouseEntered(event->{
+                           tf.getStyleClass().add("hover");
+                       });
+                       tf.setOnMouseExited(event->{
+                           tf.getStyleClass().remove("hover");
+                       });
+
                }else if (nodo instanceof Parent){
                    eventoMouse((Parent) nodo);
                }
@@ -186,4 +184,35 @@ public class HelloController {
     }
 
 
+    private void validarEntrada(Parent padre, int [][] tabla, int columnaSeleccionada, int filaSeleccionada){
+        for (Node node: padre.getChildrenUnmodifiable()){
+            if (node instanceof TextField){
+                TextField tf=(TextField) node;
+                Integer fila=(Integer) tf.getProperties().get("fila");
+                Integer col=(Integer) tf.getProperties().get("col");
+
+                int v=tabla[fila][col];
+                if (col != null && col == columnaSeleccionada) {
+                    if (tf.getText().equals(v)){
+                        tf.setStyle("-fx-background-color:red");
+                    }
+
+                }
+                if (fila!=null && fila==filaSeleccionada){
+                    if (tf.getText().equals(v)){
+                        tf.setStyle("-fx-background-color:red");
+                    }
+                }
+
+
+
+            } else if (node instanceof Parent) {
+                    validarEntrada((Parent) node, tabla,columnaSeleccionada,filaSeleccionada);
+            }
+
+        }
+    }
 }
+
+
+
