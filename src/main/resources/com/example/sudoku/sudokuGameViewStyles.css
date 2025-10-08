@@ -1,19 +1,52 @@
+.root {
+    -fx-background-color: #F8F9FF;
+}
+
+/* Containers */
 .containerHead{
-    -fx-border-color:black;
+    -fx-border-color:#454973;
     -fx-alignment:center;
-    -fx-pref-height:50;
+    -fx-pref-height:60;
 }
 .containerFooter{
-    -fx-border-color:blue;
+    -fx-border-color:#454973;
     -fx-alignment:center;
+    -fx-spacing: 15;
 }
 
 .containerBoard{
-    -fx-border-color:red;
+    -fx-border-color:#454973;
     -fx-alignment:center;
     -fx-padding:20;
 }
 
+/* Label */
+
+.containerHead .label {
+    -fx-text-fill: #454973;
+    -fx-text-weight: bold;
+    -fx-font-size: 30px;
+    -fx-font-family: "Arial Black";
+}
+
+ /* General button style */
+
+ .containerFooter .button {
+    -fx-background-color: #454973;
+    -fx-text-fill: #F8F9FF;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-pref-width: 90;
+    -fx-pref-height: 40;
+ }
+
+ .containerFooter .button:hover {
+     -fx-background-color: #5A5FA0;
+ }
+
+/* Boards and cells*/
 .containerBoard .grid-bloques {
      -fx-background-color: #141414;
      -fx-padding:1;
@@ -28,28 +61,29 @@
       -fx-background-color: #C9C9C9;
       -fx-alignment:center;
   }
-/*estilo para cada uno de los textFields*/
+/* Style for the textFields*/
  .cell{
     -fx-pref-width:60;
     -fx-pref-height:60;
     -fx-alignment:center;
     -fx-font-size:18;
-    -fx-background-color: #F5FCFF;
+    -fx-background-color: #EBEEFF;
     -fx-border-color: #bbb;
     -fx-border-width:1;
  }
  .cell.given {
-     -fx-background-color: #F2F2F2;
+     -fx-background-color: #F8F9FF;
      -fx-font-weight: bold;
  }
 
+/* Effects*/
 .hover{
--fx-background-color: #41E0C3;
-  -fx-effect: dropshadow(gaussian, rgba(65,224,195,0.6), 6, 0.2, 0, 0);
+-fx-background-color: #C2CBFF;
+  -fx-effect: dropshadow(#C2CBFF);
 }
 .highlight{
-    -fx-background-color:#D9FDFF;
+    -fx-background-color:#C2CCFF;
 }
 .cell.conflict {
-    -fx-background-color: #ffcccc;
+    -fx-background-color: #C2CCFF;
 }

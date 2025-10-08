@@ -1,5 +1,6 @@
 package com.example.sudoku;
 
+import com.example.sudoku.view.HelloApplication;
 import javafx.application.Application;
 
 public class Launcher {
