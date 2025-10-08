@@ -14,6 +14,8 @@ public class HelloController {
 
     private SudokuModel model;
 
+    private TextField celdaSeleccionada = null;
+
     @FXML
     public void initialize(){
         model = new SudokuModel();
@@ -32,7 +34,7 @@ public class HelloController {
                         int rGlobal = r * model.getRowBlock() + row;
                         int cGlobal = c * model.getColBlock() + col;
 
-                        // se guardan  las coordenadas globales como propiedades
+                        /* Global coordinates are saved as properties*/
                         cell.getProperties().put("fila", rGlobal);
                         cell.getProperties().put("col", cGlobal);
                         cell.setId("celda_" + rGlobal + "_" + cGlobal);
@@ -41,27 +43,33 @@ public class HelloController {
                         int columna=(int)cell.getProperties().get("col");
 
 
-                        /**/
+                        /*To manage the click
+                        * Changes colors of selected cells
+                        * Returns to original colors once clicked on again*/
                         cell.setOnMouseClicked(event->{
 
+                            // Toggle: si es la misma celda, deseleccionar
+                            if (celdaSeleccionada == cell) {
+                                limpiarSeleccion(gridContainer);
+                                celdaSeleccionada = null;
+                                System.out.println("Celda deseleccionada");
+                                return; // Salir del evento
+                            }
 
-                            /*funcion para resaltar celdas*/
-                            sombrearFilaColumna(gridContainer,columna,fila);
+                            // Seleccionar nueva celda
+                            sombrearFilaColumna(gridContainer, columna, fila);
 
-
-                            System.out.println("Click en fila=" + fila + " col=" + columna);
-                            GridPane padre=(GridPane) cell.getParent();
-
-                            for (Node hijo: padre.getChildren()){
-                                if (hijo instanceof TextField){
-                                    TextField tf=(TextField) hijo;
-                                    tf.setStyle("-fx-background-color: #C2CCFF;");
-
-
+                            GridPane padre = (GridPane) cell.getParent();
+                            for (Node hijo : padre.getChildren()) {
+                                if (hijo instanceof TextField) {
+                                    ((TextField) hijo).setStyle("-fx-background-color: #C2CCFF;");
                                 }
                             }
+
                             cell.setStyle("-fx-background-color: #FFBF63;");
-                            System.out.println("id: "+cell.getId());
+                            celdaSeleccionada = cell;
+
+                            System.out.println("Click en fila=" + fila + " col=" + columna);
                         });
 
                     }
@@ -71,7 +79,18 @@ public class HelloController {
             }
         }
 
+    }
 
+    /*Method to clean selection*/
+    private void limpiarSeleccion(Parent padre) {
+        for (Node node : padre.getChildrenUnmodifiable()) {
+            if (node instanceof TextField) {
+                TextField tf = (TextField) node;
+                tf.setStyle(""); // Volver al estilo original del CSS
+            } else if (node instanceof Parent) {
+                limpiarSeleccion((Parent) node);
+            }
+        }
     }
 
 

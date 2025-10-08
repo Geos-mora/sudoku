@@ -79,7 +79,7 @@
 /* Effects*/
 .hover{
 -fx-background-color: #C2CBFF;
-  -fx-effect: dropshadow(#C2CBFF);
+  -fx-effect: dropshadow(gaussian, rgba(194,203,255,0.6), 6, 0.2, 0, 0);
 }
 .highlight{
     -fx-background-color:#C2CCFF;
