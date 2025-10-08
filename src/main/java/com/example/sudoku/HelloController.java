@@ -55,6 +55,7 @@ public class HelloController {
                         grid.add(cell,col,row);
                         int fila=(int)cell.getProperties().get("fila");
                         int columna=(int)cell.getProperties().get("col");
+                        validarEntrada(gridContainer,sudokuTabla,columna,fila);
 
 
                         /**/
@@ -83,6 +84,7 @@ public class HelloController {
                     }
                 }
                 iniciarTabla(gridContainer,sudokuTabla);
+
                 eventoMouse(gridContainer );
 
 
@@ -185,32 +187,27 @@ public class HelloController {
 
 
     private void validarEntrada(Parent padre, int [][] tabla, int columnaSeleccionada, int filaSeleccionada){
-        for (Node node: padre.getChildrenUnmodifiable()){
-            if (node instanceof TextField){
-                TextField tf=(TextField) node;
-                Integer fila=(Integer) tf.getProperties().get("fila");
-                Integer col=(Integer) tf.getProperties().get("col");
+        for (Node nodo : padre.getChildrenUnmodifiable()){
+            if (nodo instanceof TextField){
+                TextField tf=(TextField) nodo;
+                Integer col = (Integer) tf.getProperties().get("col");
+                Integer fila=(Integer)  tf.getProperties().get("fila");
+             /*   tf.setOnKeyReleased(event->{
+                    String r=tf.getText();
+                    for (Node cell:
+                    )
 
-                int v=tabla[fila][col];
-                if (col != null && col == columnaSeleccionada) {
-                    if (tf.getText().equals(v)){
-                        tf.setStyle("-fx-background-color:red");
-                    }
 
+
+
+                });*/
+            }else {
+                if (nodo instanceof Parent){
+                    validarEntrada((Parent) nodo,tabla,columnaSeleccionada,filaSeleccionada);
                 }
-                if (fila!=null && fila==filaSeleccionada){
-                    if (tf.getText().equals(v)){
-                        tf.setStyle("-fx-background-color:red");
-                    }
-                }
-
-
-
-            } else if (node instanceof Parent) {
-                    validarEntrada((Parent) node, tabla,columnaSeleccionada,filaSeleccionada);
             }
-
         }
+
     }
 }
 
