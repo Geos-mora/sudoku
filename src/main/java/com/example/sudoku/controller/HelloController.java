@@ -21,8 +21,10 @@ public class HelloController {
     public void initialize(){
         model = new SudokuModel();
         System.out.println("initialize is ok");
+        crearSudoku();
+    }
 
-
+    private void crearSudoku(){
         for (int r=0; r< model.getRowGrid(); r++){
             for (int c=0; c<model.getColGrid(); c++){
                 GridPane grid=makeBloque(r,c);
@@ -74,8 +76,6 @@ public class HelloController {
                 eventoMouse(gridContainer );
             }
         }
-
-
     }
 
 
@@ -100,6 +100,8 @@ public class HelloController {
 
                 if (col != null && col == columnaSeleccionada) {
                     tf.setStyle("-fx-background-color: #C2CCFF;");
+
+
 
                 }
                 if (fila!=null && fila==filaSeleccionada){
