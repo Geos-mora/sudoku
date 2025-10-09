@@ -42,7 +42,7 @@ public class HelloController {
                         grid.add(cell,col,row);
                         int fila=(int)cell.getProperties().get("fila");
                         int columna=(int)cell.getProperties().get("col");
-                        validarEntrada(gridContainer,sudokuTabla,columna,fila);
+                        validarEntrada(gridContainer, columna,fila);
 
 
                         /**/
@@ -70,7 +70,7 @@ public class HelloController {
 
                     }
                 }
-                iniciarTabla(gridContainer,sudokuTabla);
+                iniciarTabla(gridContainer);
                 eventoMouse(gridContainer );
             }
         }
@@ -174,8 +174,7 @@ public class HelloController {
     }
 
 
-<<<<<<< HEAD:src/main/java/com/example/sudoku/HelloController.java
-    private void validarEntrada(Parent padre, int [][] tabla, int columnaSeleccionada, int filaSeleccionada){
+    private void validarEntrada(Parent padre,  int columnaSeleccionada, int filaSeleccionada){
         for (Node nodo : padre.getChildrenUnmodifiable()){
             if (nodo instanceof TextField){
                 TextField tf=(TextField) nodo;
@@ -200,7 +199,7 @@ public class HelloController {
 
                             System.out.println("fila:"+fila+"columna"+col+"----:"+celda.getText());
                         }else {
-                            validarEntrada((Parent) nodo,tabla,columnaSeleccionada,filaSeleccionada);                        }
+                            validarEntrada((Parent) nodo,columnaSeleccionada,filaSeleccionada);                        }
                     }
 
 
@@ -209,8 +208,9 @@ public class HelloController {
                 });
             }else {
                 if (nodo instanceof Parent){
-                    validarEntrada((Parent) nodo,tabla,columnaSeleccionada,filaSeleccionada);
+                    validarEntrada((Parent) nodo,columnaSeleccionada,filaSeleccionada);
                 }
 }
-
-
+        }
+    }
+}
