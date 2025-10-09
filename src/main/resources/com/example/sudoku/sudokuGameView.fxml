@@ -7,20 +7,22 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="676.0" stylesheets="@sudokuGameViewStyles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sudoku.HelloController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="676.0" stylesheets="@sudokuGameViewStyles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.sudoku.controller.HelloController">
    <top>
       <HBox prefHeight="100.0" prefWidth="200.0" styleClass="containerHead" BorderPane.alignment="CENTER">
          <children>
-            <Label text="sudoku" />
+            <Label text="Sudoku"> </Label>
          </children>
       </HBox>
    </top>
    <bottom>
       <HBox prefHeight="100.0" prefWidth="600.0" styleClass="containerFooter" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Label" />
-            <Button mnemonicParsing="false" text="Button" />
+            <Button fx:id="pista" mnemonicParsing="false" text="Help" />
+            <Button fx:id="nuevoJuego" mnemonicParsing="false" text="Play" />
+            <Button fx:id="reiniciar" mnemonicParsing="false" text="Reset" />
          </children>
       </HBox>
    </bottom>
