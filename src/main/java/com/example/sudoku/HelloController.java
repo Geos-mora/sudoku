@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
 import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -190,17 +191,34 @@ public class HelloController {
         for (Node nodo : padre.getChildrenUnmodifiable()){
             if (nodo instanceof TextField){
                 TextField tf=(TextField) nodo;
-                Integer col = (Integer) tf.getProperties().get("col");
-                Integer fila=(Integer)  tf.getProperties().get("fila");
-             /*   tf.setOnKeyReleased(event->{
-                    String r=tf.getText();
-                    for (Node cell:
-                    )
+                Integer colGlobal = (Integer) tf.getProperties().get("col");
+                Integer filaGlobal=(Integer)  tf.getProperties().get("fila");
+
+
+                tf.setOnKeyReleased(event->{
+                    String capturarNumeor=tf.getText();
+                    for (Node node :padre.getChildrenUnmodifiable()){
+                        if (node instanceof TextField){
+                            TextField celda=(TextField) node;
+                            String valorCelda=celda.getText();
+                            Integer col = (Integer) celda.getProperties().get("col");
+                            Integer fila=(Integer)  celda.getProperties().get("fila");
+
+                            if (celda==tf)continue;
+                            if (valorCelda.equals(capturarNumeor)){
+                                celda.setStyle("-fx-background-color: red;");
+                                tf.setStyle("-fx-background-color: red;");
+                            }
+
+                            System.out.println("fila:"+fila+"columna"+col+"----:"+celda.getText());
+                        }else {
+                            validarEntrada((Parent) nodo,tabla,columnaSeleccionada,filaSeleccionada);                        }
+                    }
 
 
 
 
-                });*/
+                });
             }else {
                 if (nodo instanceof Parent){
                     validarEntrada((Parent) nodo,tabla,columnaSeleccionada,filaSeleccionada);
