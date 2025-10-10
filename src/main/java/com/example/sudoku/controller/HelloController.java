@@ -21,7 +21,6 @@ public class HelloController {
     @FXML
     public void initialize(){
         model = new SudokuModel();
-        System.out.println("initialize is ok");
         crearSudoku();
     }
     private GridPane makeBloque(int row, int col){
@@ -55,34 +54,15 @@ public class HelloController {
                         cell.getProperties().put("fila", rGlobal);
                         cell.getProperties().put("col", cGlobal);
                         cell.setId("celda_" + rGlobal + "_" + cGlobal);
+
+                        /* se agregan todos los 36 textfield al sus respectivos bloques*/
                         grid.add(cell,col,row);
                         int fila=(int)cell.getProperties().get("fila");
                         int columna=(int)cell.getProperties().get("col");
-                     //   validarEntrada(gridContainer, columna,fila);
 
 
-                        /**/
-                        cell.setOnMouseClicked(event->{
-
-
-                            /*funcion para resaltar celdas*/
-                            sombrearFilaColumna(gridContainer,columna,fila);
-
-
-                            System.out.println("Click en fila=" + fila + " col=" + columna);
-                            GridPane padre=(GridPane) cell.getParent();
-
-                            for (Node hijo: padre.getChildren()){
-                                if (hijo instanceof TextField){
-                                    TextField tf=(TextField) hijo;
-                                    tf.setStyle("-fx-background-color: #C2CCFF;");
-
-
-                                }
-                            }
-                            cell.setStyle("-fx-background-color: #FFBF63;");
-                            System.out.println("id: "+cell.getId());
-                        });
+                        /* evento que al hacer click pinta el bloque y la celda seleccionada */
+                         onMaouseClick(gridContainer,cell, columna, fila);
 
                     }
                 }
@@ -97,51 +77,34 @@ public class HelloController {
 
     private void sombrearFilaColumna(Parent padre, int columnaSeleccionada, int filaSeleccionada) {
         /* clear previous styles */
-        for (Node node : padre.getChildrenUnmodifiable()) {
-            if (node instanceof TextField) {
-                TextField tf = (TextField) node;
+        for (TextField tf : todasLasCeldas(padre)) {
                 tf.setStyle("");
-            }else if (node instanceof Parent){
-                sombrearFilaColumna((Parent) node,columnaSeleccionada,filaSeleccionada);
-            }
         }
 
         /*highlight the row and column of the selected cell*/
-        for (Node node : padre.getChildrenUnmodifiable()) {
-            if (node instanceof TextField) {
-                TextField tf = (TextField) node;
+        for (TextField tf : todasLasCeldas(padre)) {
                 Integer col = (Integer) tf.getProperties().get("col");
                 Integer fila=(Integer)  tf.getProperties().get("fila");
 
-
                 if (col != null && col == columnaSeleccionada) {
                     tf.setStyle("-fx-background-color: #C2CCFF;");
-
-
-
 
                 }
                 if (fila!=null && fila==filaSeleccionada){
                     tf.setStyle("-fx-background-color: #C2CCFF;");
                 }
 
-            }else if (node instanceof Parent){
-                sombrearFilaColumna((Parent) node, columnaSeleccionada,filaSeleccionada);
-            }
         }
     }
 
 
 
     private void iniciarTabla(Parent padre){
-        for (Node nodo: padre.getChildrenUnmodifiable()){
-            if (nodo instanceof TextField){
-                TextField tf=(TextField)nodo;
+        for (TextField tf: todasLasCeldas(padre)){
                 Integer col=(Integer) tf.getProperties().get("col");
                 Integer fila=(Integer) tf.getProperties().get("fila");
 
                 if (fila == null || col == null) continue;
-
                 // Obtener valor del modelo
                 int v = model.getValorEn(fila, col);
 
@@ -153,31 +116,36 @@ public class HelloController {
                 if (model.esCeldaGiven(fila, col) && !tf.getStyleClass().contains("given")){
                     tf.getStyleClass().add("given");
                 }
-
-            }else if (nodo instanceof Parent){
-                iniciarTabla((Parent) nodo);
-            }
         }
     }
 
 
     /* funtion to change the color textfields when the mouse is over them */
     private void eventoMouse(Parent padre){
-        for (Node nodo: padre.getChildrenUnmodifiable()){
-            if (nodo instanceof TextField){
-                TextField tf=(TextField) nodo;
+        for (TextField tf: todasLasCeldas(padre)){
+            tf.setOnMouseEntered(event->{
+                tf.getStyleClass().add("hover");
+            });
+            tf.setOnMouseExited(event->{
+                tf.getStyleClass().remove("hover");
+            });
 
-                tf.setOnMouseEntered(event->{
-                    tf.getStyleClass().add("hover");
-                });
-                tf.setOnMouseExited(event->{
-                    tf.getStyleClass().remove("hover");
-                });
-
-            }else if (nodo instanceof Parent){
-                eventoMouse((Parent) nodo);
-            }
         }
+    }
+
+    private void onMaouseClick(Parent padre, TextField cell,int columna, int fila){
+        cell.setOnMouseClicked(event->{
+            /*funcion para resaltar celdas*/
+            sombrearFilaColumna(padre,columna,fila);
+            System.out.println("Click en fila=" + fila + " col=" + columna);
+            GridPane padree=(GridPane) cell.getParent();
+
+            for (TextField tf: todasLasCeldas(padree)){
+                tf.setStyle("-fx-background-color: #C2CCFF;");
+            }
+            cell.setStyle("-fx-background-color: #FFBF63;");
+
+        });
     }
 
 
@@ -200,7 +168,7 @@ public class HelloController {
                 limpiarEntorno(padre, r0, c0);
 
                 if (v.isEmpty()) {
-                    tf.setStyle(""); // si borran el número, quitamos rojo
+                    tf.setStyle(""); /* si borran el número, quitamos rojo*/
                     return;
                 }
 
