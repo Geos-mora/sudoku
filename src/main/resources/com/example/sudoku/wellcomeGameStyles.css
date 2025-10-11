@@ -1,0 +1,51 @@
+
+/*------------Head------------------*/
+.headContainer{
+    -fx-alignment:center;
+    -fx-background-color:#B371DE;
+      -fx-background-radius: 8;
+      -fx-border-radius: 8;
+    -fx-border-color:#450063;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.0, 0, 4);
+}
+.headContainer > Label{
+       -fx-text-fill: white;
+            -fx-text-weight: bold;
+            -fx-font-size: 30px;
+            -fx-font-family: "Arial Black";
+            -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.0, 0, 4);
+}
+
+/*------------body------------------*/
+.bodyContainer{
+    -fx-alignment:center;
+}
+.bodyContainer > Label{
+    -fx-text-fill: #454973;
+        -fx-text-weight: bold;
+        -fx-font-size: 30px;
+        -fx-font-family: "Arial Black";
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.0, 0, 4);
+}
+/*----------------footer---------------*/
+.footerContainer{
+       -fx-alignment:center;
+        -fx-background-color:#B371DE;
+        -fx-border-radius:8;
+        -fx-border-color:8;
+        -fx-border-color:#450063;
+              -fx-background-radius: 8;
+              -fx-border-radius: 8;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.0, 0, 4);
+}
+ .footerContainer .footerboton{
+        -fx-background-color: #362740;
+        -fx-text-fill: #F8F9FF;
+        -fx-background-radius: 8;
+        -fx-border-radius: 8;
+        -fx-font-size: 16px;
+        -fx-font-weight: bold;
+        -fx-pref-width: 90;
+        -fx-pref-height: 40;
+        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.0, 0, 4);
+}
