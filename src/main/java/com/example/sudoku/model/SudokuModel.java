@@ -1,4 +1,5 @@
 package com.example.sudoku.model;
+import com.example.sudoku.model.SudokuGenerator;
 
 public class SudokuModel {
     private int [][] sudokuTabla;
