@@ -53,7 +53,6 @@ public class HelloController {
                         // se guardan  las coordenadas globales como propiedades
                         cell.getProperties().put("fila", rGlobal);
                         cell.getProperties().put("col", cGlobal);
-                        cell.setId("celda_" + rGlobal + "_" + cGlobal);
 
                         /* se agregan todos los 36 textfield al sus respectivos bloques*/
                         grid.add(cell,col,row);

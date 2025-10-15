@@ -1,73 +1,108 @@
 package com.example.sudoku.model;
-import com.example.sudoku.model.SudokuGenerator;
 
 public class SudokuModel {
-    private int [][] sudokuTabla;
-    private int rowGrid=3;
-    private int colGrid=2;
-    private int rowBlock=2;
-    private int colBlock=3;
+    private static final int N = 6;
+
+    // Matriz que se muestra en pantalla (con ceros en las celdas editables)
+    private int[][] puzzle;
+
+    /* array de la tabla  solucionada  (sin ceros)*/
+    private int[][] solution;
+
+    /* Parámetros de bloques 2x3*/
+    private final int rowGrid = 3;
+    private final int colGrid = 2;
+    private final int rowBlock = 2;
+    private final int colBlock = 3;
+
+    /*tabla de refenrecia para iniciar en la ui,*/
+    private static final int[][] PATRON_PISTAS = {
+            {0, 0, 2, 0, 0, 4},
+            {0, 3, 0, 0, 5, 0},
+            {0, 0, 0, 1, 0, 6},
+            {4, 0, 0, 0, 0, 0},
+            {0, 5, 0, 0, 6, 0},
+            {0, 0, 3, 0, 0, 2}
+    };
+
 
     /* Getters */
-    public int[][] getSudokuTabla() { return sudokuTabla; }
+    public int[][] getSudokuTabla() { return puzzle; } // mantiene tu nombre, pero ahora devuelve el puzzle visible
     public int getRowGrid() { return rowGrid; }
     public int getColGrid() { return colGrid; }
     public int getRowBlock() { return rowBlock; }
     public int getColBlock() { return colBlock; }
 
-    /* Constructor */
+    /* Constructor: genera solución y aplica patrón de pistas */
     public SudokuModel() {
-        sudokuTabla = new int[][] {
-            {0, 2, 0, 4, 0, 6},
-            {4, 0, 6, 0, 2, 0},
-            {0, 3, 0, 5, 0, 1},
-            {5, 0, 1, 0, 3, 0},
-            {0, 4, 0, 6, 0, 2},
-            {6, 0, 2, 0, 4, 0}
-    };
+        regenerar();
     }
 
-    /* Method to obtain the value in position */
-    public int getValorEn(int fila, int col) {
-        return sudokuTabla[fila][col];
-    }
-
-    /* Method to know if a cell is editable (initial value 0)*/
-    public boolean esCeldaEditable(int fila, int col) {
-        return sudokuTabla[fila][col] == 0;
-    }
-
-    /* Method to know if a cell is "given" (values different from 0)"*/
-    public boolean esCeldaGiven(int fila, int col) {
-        return sudokuTabla[fila][col] != 0;
-    }
-
-    /* Validate if the input value is correct*/
-    public boolean esValorCorrecto(int fila, int col, String valorIngresado) {
-        if (valorIngresado == null || valorIngresado.isEmpty()) {
-            return true; // If the cell is empty there's no conflict
+    /** Regenera una nueva solución y crea el puzzle según el patrón de pistas */
+    public final void regenerar() {
+        solution = SudokuGenerator.generarSudoku6x6Resuelto(); // nunca null
+        puzzle = new int[N][N];
+        /*aqui se genera la tabla donde se recorre la tabla de las pistas y la tabla generada*/
+        for (int r = 0; r < N; r++) {
+            for (int c = 0; c < N; c++) {
+                puzzle[r][c] = (PATRON_PISTAS[r][c] == 0) ? 0 : solution[r][c];
+            }
         }
+    }
 
+    /* Valor que se muestra en la grilla (puzzle) */
+    public int getValorEn(int fila, int col) {
+        validarIndices(fila, col);
+        return puzzle[fila][col];
+    }
+
+    /* Valor correcto de la solución en esa celda (útil para validar) */
+    public int getValorSolucion(int fila, int col) {
+        validarIndices(fila, col);
+        return solution[fila][col];
+    }
+
+    /* ¿La celda es editable (pista = 0 en puzzle)? */
+    public boolean esCeldaEditable(int fila, int col) {
+        validarIndices(fila, col);
+        return puzzle[fila][col] == 0;
+    }
+
+    /* ¿La celda es “dada” (no editable)? */
+    public boolean esCeldaGiven(int fila, int col) {
+        validarIndices(fila, col);
+        return puzzle[fila][col] != 0;
+    }
+
+    /* Valida si el valor ingresado por el usuario coincide con la SOLUCIÓN */
+    public boolean esValorCorrecto(int fila, int col, String valorIngresado) {
+        validarIndices(fila, col);
+        if (valorIngresado == null || valorIngresado.isEmpty()) return true;
         try {
             int valor = Integer.parseInt(valorIngresado);
-            return valor == sudokuTabla[fila][col];
+            return valor == solution[fila][col];
         } catch (NumberFormatException e) {
             return false;
         }
     }
 
-    /*Verify if there's conflict in the row or column*/
+    /* Verifica conflicto en la fila/columna respecto al valor ingresado (contra la solución) */
     public boolean hayConflictoEnFilaOColumna(int fila, int col, String valorIngresado,
                                               int filaSeleccionada, int colSeleccionada) {
-        if (valorIngresado == null || valorIngresado.isEmpty()) {
-            return false;
-        }
+        validarIndices(fila, col);
+        if (valorIngresado == null || valorIngresado.isEmpty()) return false;
 
-        // Verify is it's in the same column or row as the selected cell only
         if (fila == filaSeleccionada || col == colSeleccionada) {
             return !esValorCorrecto(fila, col, valorIngresado);
         }
-
         return false;
+    }
+
+    /* --- Utilidades --- */
+    private void validarIndices(int fila, int col) {
+        if (puzzle == null || solution == null)
+            throw new IllegalStateException("El modelo no ha sido inicializado. Llama a regenerar().");
+        if (fila < 0 || fila >= N || col < 0 || col >= N)
+            throw new IndexOutOfBoundsException("Índices fuera de rango 0..5: (" + fila + "," + col + ")");
     }
 }
