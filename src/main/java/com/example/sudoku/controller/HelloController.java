@@ -4,6 +4,7 @@ import com.example.sudoku.model.SudokuModel;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import java.util.List;
@@ -15,6 +16,8 @@ public class HelloController {
 
     @FXML
     private GridPane gridContainer;
+    @FXML
+    private Button nuevoJuego;
 
     private SudokuModel model;
 
@@ -65,7 +68,6 @@ public class HelloController {
 
                     }
                 }
-                iniciarTabla(gridContainer);
                 eventoMouse(gridContainer );
                 validarEntrada(gridContainer);
 
@@ -95,6 +97,42 @@ public class HelloController {
 
         }
     }
+
+    @FXML
+    private void onButtonPlay() {
+        if (nuevoJuego.getText().equals("Nuevo Juego")) {
+            model=new SudokuModel(); /*se genera una nueva tabla si el texto del boton cambia a nuevo juego*/
+            limpiarTabla(gridContainer);
+            iniciarTabla(gridContainer);
+        } else {
+            iniciarTabla(gridContainer);
+            nuevoJuego.setText("Nuevo Juego");
+            nuevoJuego.setStyle("-fx-pref-width:150;");
+        }
+    }
+
+      private void limpiarTabla(Parent root) {
+        for (TextField tf : todasLasCeldas(root)) {
+            tf.setText("");
+            tf.setEditable(true);
+            tf.getStyleClass().remove("given");
+            tf.setStyle("");
+        }
+    }
+    @FXML
+    private void onButtonReset() {
+        for (TextField tf : todasLasCeldas(gridContainer)) {
+            Integer fila = (Integer) tf.getProperties().get("fila");
+            Integer col  = (Integer) tf.getProperties().get("col");
+            if (fila == null || col == null) continue;
+
+            if (model.esCeldaEditable(fila, col)) {
+                tf.setText("");  /* borra lo escrito por el usuario*/
+                tf.setStyle("");  /* quita conflictos*/
+            }
+        }
+    }
+
 
 
 
