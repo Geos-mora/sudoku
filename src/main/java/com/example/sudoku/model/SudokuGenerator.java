@@ -5,7 +5,7 @@ public class SudokuGenerator {
     // Constructor privado para que no se instancie la clase
     private SudokuGenerator() {}
 
-    // Tu función generadora del Sudoku 6x6 resuelto
+    /* función que generadora el Sudoku 6x6 resuelto*/
     public static int[][] generarSudoku6x6Resuelto() {
         final int n = 6, boxRows = 2, boxCols = 3;
         int[][] base = new int[n][n];

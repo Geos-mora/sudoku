@@ -7,7 +7,7 @@ public class SudokuModel {
     private int[][] puzzle;
 
     /* array de la tabla  solucionada  (sin ceros)*/
-    private int[][] solution;
+    public int[][] solution;
 
     /* Parámetros de bloques 2x3*/
     private final int rowGrid = 3;
@@ -19,7 +19,7 @@ public class SudokuModel {
     private static final int[][] PATRON_PISTAS = {
             {0, 0, 2, 0, 0, 4},
             {0, 3, 0, 0, 5, 0},
-            {0, 0, 0, 1, 0, 6},
+            {0, 0, 5, 1, 0, 6},
             {4, 0, 0, 0, 0, 0},
             {0, 5, 0, 0, 6, 0},
             {0, 0, 3, 0, 0, 2}
@@ -27,7 +27,7 @@ public class SudokuModel {
 
 
     /* Getters */
-    public int[][] getSudokuTabla() { return puzzle; } // mantiene tu nombre, pero ahora devuelve el puzzle visible
+    public int[][] getSudokuTabla() { return puzzle; }
     public int getRowGrid() { return rowGrid; }
     public int getColGrid() { return colGrid; }
     public int getRowBlock() { return rowBlock; }
@@ -56,7 +56,7 @@ public class SudokuModel {
         return puzzle[fila][col];
     }
 
-    /* Valor correcto de la solución en esa celda (útil para validar) */
+    /* Valor correcto de la solución en esa celda  */
     public int getValorSolucion(int fila, int col) {
         validarIndices(fila, col);
         return solution[fila][col];
@@ -74,7 +74,7 @@ public class SudokuModel {
         return puzzle[fila][col] != 0;
     }
 
-    /* Valida si el valor ingresado por el usuario coincide con la SOLUCIÓN */
+    /* Valida si el valor ingresado por el usuario coincide con la solucion */
     public boolean esValorCorrecto(int fila, int col, String valorIngresado) {
         validarIndices(fila, col);
         if (valorIngresado == null || valorIngresado.isEmpty()) return true;

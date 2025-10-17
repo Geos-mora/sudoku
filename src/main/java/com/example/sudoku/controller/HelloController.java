@@ -4,15 +4,17 @@ import com.example.sudoku.model.SudokuModel;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
+import java.util.Random;
 
 
 public class HelloController {
+    Random random=new Random();
 
     @FXML
     private GridPane gridContainer;
@@ -25,6 +27,7 @@ public class HelloController {
     public void initialize(){
         model = new SudokuModel();
         crearSudoku();
+
     }
     private GridPane makeBloque(int row, int col){
         GridPane gp=new GridPane();
@@ -104,10 +107,12 @@ public class HelloController {
             model=new SudokuModel(); /*se genera una nueva tabla si el texto del boton cambia a nuevo juego*/
             limpiarTabla(gridContainer);
             iniciarTabla(gridContainer);
+
         } else {
             iniciarTabla(gridContainer);
             nuevoJuego.setText("Nuevo Juego");
             nuevoJuego.setStyle("-fx-pref-width:150;");
+            obtenerValorReal(gridContainer);
         }
     }
 
@@ -133,6 +138,76 @@ public class HelloController {
         }
     }
 
+    @FXML
+    private void onPistaParaUsuario( ){
+        pistaParaUsuario(gridContainer);
+    }
+
+    private void pistaParaUsuario(Parent padre) {
+        List<TextField> celdasVacias = new ArrayList<>();
+
+          for (Node nodo : todasLasCeldas(padre)) {
+            if (nodo instanceof TextField tf) {
+                String texto = tf.getText();
+                if (texto == null || texto.isEmpty()) {
+                    celdasVacias.add(tf);
+                }
+            }
+          }
+
+        /* Si solo queda una celda vacía, no dar pista y el usuario la pueda llenar*/
+        if (celdasVacias.size() <= 1) {
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Sin más pistas disponibles");
+            alerta.setHeaderText(null);
+            alerta.setContentText("Solo queda una celda vacía.\n¡Debes completarla tú mismo!");
+            alerta.showAndWait();
+            return;
+        }
+
+        Random rand= new Random();
+        TextField celdaSeleccionada =celdasVacias.get(rand.nextInt(celdasVacias.size()));
+
+        Integer fila =(Integer)celdaSeleccionada.getProperties().get("fila");
+        Integer col =(Integer)celdaSeleccionada.getProperties().get("col");
+
+        int valorCorrecto= model.getValorSolucion(fila, col);
+        celdaSeleccionada.setText(String.valueOf(valorCorrecto));
+
+        celdaSeleccionada.setStyle(
+                        "-fx-effect: dropshadow(gaussian, rgba(0,180,60,0.6), 12, 0.0, 0, 4);\n" +
+                        "-fx-border-color: #001A69;\n" +
+                        "-fx-border-width:1;"+
+                        "-fx-background-color:#E0FFE7;"
+        );
+    }
+
+
+    /*esta funcion me servira PARA obtener el valor real si el usuario escribe  mal o no la celda que acaba de editar*/
+   private void obtenerValorReal(Parent padre) {
+       for (TextField tf : todasLasCeldas(padre)) {
+
+           tf.setOnKeyReleased(event -> {
+               Integer fila= (Integer) tf.getProperties().get("fila");
+               Integer col= (Integer) tf.getProperties().get("col");
+               if (fila==null || col==null) return;
+
+               String valorIngresado= tf.getText()== null ? "" : tf.getText().trim();
+               if (valorIngresado.isEmpty()) {
+                   tf.setStyle(""); /* limpiar si se borran*/
+                   return;
+               }
+
+
+
+              if (model.esValorCorrecto(fila, col, valorIngresado)) {
+                   tf.setStyle("-fx-background-color: #C6F6C6;");
+               } else {
+                   tf.setStyle("-fx-background-color: #FFC0B8;");
+               }
+           });
+       }
+   }
 
 
 
@@ -142,10 +217,10 @@ public class HelloController {
                 Integer fila=(Integer) tf.getProperties().get("fila");
 
                 if (fila == null || col == null) continue;
-                // Obtener valor del modelo
+                /* Obtener valor del modelo*/
                 int v = model.getValorEn(fila, col);
 
-                // Actualizar vista
+                /* Actualizar vista*/
                 tf.setText(v==0? "" : Integer.toString(v));
                 tf.setEditable(model.esCeldaEditable(fila, col));
 
@@ -192,7 +267,7 @@ public class HelloController {
             if (Boolean.TRUE.equals(tf.getProperties().get("validador"))) continue;
             tf.getProperties().put("validador", true);
 
-            tf.setOnKeyReleased(ev -> {
+            tf.setOnKeyReleased(event -> {
                 String v = tf.getText();
                 if (v == null) v = "";
                 v = v.trim();

@@ -19,7 +19,7 @@
    <bottom>
       <HBox prefHeight="100.0" prefWidth="600.0" styleClass="containerFooter" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="pista" mnemonicParsing="false" text="Help" />
+            <Button fx:id="pista" mnemonicParsing="false" onAction="#onPistaParaUsuario" text="Help" />
             <Button fx:id="nuevoJuego" mnemonicParsing="false" onAction="#onButtonPlay" text="Play" />
             <Button fx:id="reiniciar" mnemonicParsing="false" onAction="#onButtonReset" text="Reset" />
          </children>
