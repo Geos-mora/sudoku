@@ -72,7 +72,6 @@ public class HelloController {
                     }
                 }
                 eventoMouse(gridContainer );
-                validarEntrada(gridContainer);
 
             }
         }
@@ -104,6 +103,14 @@ public class HelloController {
     @FXML
     private void onButtonPlay() {
         if (nuevoJuego.getText().equals("Nuevo Juego")) {
+            /*-----------------------Alert box -------------------*/
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("Nuevo juego");
+            alerta.setHeaderText(null);
+            alerta.setContentText(" iniciar nueva partida");
+            alerta.showAndWait();
+            /*----------------------------------------------------*/
+
             model=new SudokuModel(); /*se genera una nueva tabla si el texto del boton cambia a nuevo juego*/
             limpiarTabla(gridContainer);
             iniciarTabla(gridContainer);
@@ -112,8 +119,8 @@ public class HelloController {
             iniciarTabla(gridContainer);
             nuevoJuego.setText("Nuevo Juego");
             nuevoJuego.setStyle("-fx-pref-width:150;");
-            obtenerValorReal(gridContainer);
         }
+        engancharHandlers(gridContainer);
     }
 
       private void limpiarTabla(Parent root) {
@@ -121,6 +128,7 @@ public class HelloController {
             tf.setText("");
             tf.setEditable(true);
             tf.getStyleClass().remove("given");
+            tf.getStyleClass().remove("pistaUsuario");
             tf.setStyle("");
         }
     }
@@ -134,6 +142,7 @@ public class HelloController {
             if (model.esCeldaEditable(fila, col)) {
                 tf.setText("");  /* borra lo escrito por el usuario*/
                 tf.setStyle("");  /* quita conflictos*/
+                tf.getStyleClass().remove("pistaUsuario");
             }
         }
     }
@@ -174,42 +183,105 @@ public class HelloController {
         int valorCorrecto= model.getValorSolucion(fila, col);
         celdaSeleccionada.setText(String.valueOf(valorCorrecto));
 
-        celdaSeleccionada.setStyle(
-                        "-fx-effect: dropshadow(gaussian, rgba(0,180,60,0.6), 12, 0.0, 0, 4);\n" +
-                        "-fx-border-color: #001A69;\n" +
-                        "-fx-border-width:1;"+
-                        "-fx-background-color:#E0FFE7;"
-        );
+        celdaSeleccionada.getStyleClass().add("pistaUsuario");
+    }
+
+
+
+    private void winner(Parent padre) {
+        boolean todasCeldasLlenas= true;
+        boolean todasCeldasCorrectas= true;
+
+        for (TextField tf : todasLasCeldas(padre)) {
+            Integer fila= (Integer) tf.getProperties().get("fila");
+            Integer col= (Integer) tf.getProperties().get("col");
+            if (fila==null || col==null) continue;
+
+            String valor= tf.getText()== null?"" :tf.getText().trim();
+
+            /* condicional para saber si hay alguna celda vacía (no ha terminado)*/
+            if (valor.isEmpty()) {
+                todasCeldasLlenas = false;
+                break;
+            }
+
+            /* Si alguna celda está incorrecta, (no ganó todavía)*/
+            if (!model.esValorCorrecto(fila, col, valor)) {
+                todasCeldasCorrectas=false;
+            }
+        }
+
+        /* condicional para mostrar alerta solo si todas están llenas y correctas*/
+        if (todasCeldasLlenas && todasCeldasCorrectas) {
+            Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            alerta.setTitle("¡Felicidades!");
+            alerta.setHeaderText("¡Has completado el Sudoku!");
+            alerta.setContentText("Todas las celdas son correctas.\n¡Eres un verdadero maestro del Sudoku!");
+            alerta.showAndWait();
+        }
+    }
+
+    /*---------------------------------------------------------------------------------------*/
+    /*funcion que se encarga de unir los  tf.setOnKeyReleased puesto que al crear los por separado generan conflicto*/
+    private void engancharHandlers(Parent padre) {
+        for (TextField tf : todasLasCeldas(padre)) {
+            if (Boolean.TRUE.equals(tf.getProperties().get("validador"))) continue;
+            tf.getProperties().put("validador", true);
+
+            tf.setOnKeyReleased(e -> {
+                validarEntrada(tf, padre);/*esta funcion marcara los numeros repetifdos en la fila y en la columna y bloque*/
+                obtenerValorReal(tf);/*esta funcion solo mostrara si esta bien o mal el valor ingresado*/
+                winner(gridContainer);/*se ganara una vez todas las celdas esten llenas*/
+            });
+        }
+    }
+    /* funcion que se encarga de validar la entrada del usuario (marcar en rojo) */
+    private void validarEntrada(TextField tf,Parent padre) {
+        String v = (tf.getText() == null ? "" : tf.getText().trim());
+        Integer r0 = (Integer) tf.getProperties().get("fila");
+        Integer c0 = (Integer) tf.getProperties().get("col");
+        if (r0 == null || c0 == null) return;
+
+        limpiarEntorno(padre, r0, c0);
+        if (v.isEmpty()) { tf.setStyle(""); return; }
+
+        boolean conflicto = false;
+        for (TextField itemTf : todasLasCeldas(padre)) {
+            if (itemTf == tf) continue;
+            Integer r = (Integer) itemTf.getProperties().get("fila");
+            Integer c = (Integer) itemTf.getProperties().get("col");
+            if (r == null || c == null) continue;
+
+            boolean mismaFilaColBloque= (r.equals(r0)) || (c.equals(c0)) || mismoBloque(r, c, r0, c0);
+            String valOtro=(itemTf.getText() == null ? "" : itemTf.getText().trim());
+
+            if (mismaFilaColBloque && !valOtro.isEmpty() && v.equals(valOtro)) {
+                itemTf.setStyle("-fx-background-color: #FFC0B8;");
+                tf.setStyle("-fx-background-color: #FFC0B8;");
+                conflicto = true;
+            }
+        }
+        if (!conflicto) tf.setStyle("");
     }
 
 
     /*esta funcion me servira PARA obtener el valor real si el usuario escribe  mal o no la celda que acaba de editar*/
-   private void obtenerValorReal(Parent padre) {
-       for (TextField tf : todasLasCeldas(padre)) {
+   private void obtenerValorReal(TextField tf) {
+       Integer fila=(Integer) tf.getProperties().get("fila");
+       Integer col=(Integer) tf.getProperties().get("col");
+       if (fila==null || col==null) return;
 
-           tf.setOnKeyReleased(event -> {
-               Integer fila= (Integer) tf.getProperties().get("fila");
-               Integer col= (Integer) tf.getProperties().get("col");
-               if (fila==null || col==null) return;
+       String v= (tf.getText()==null ? "" : tf.getText().trim());
+       if (v.isEmpty()) { tf.setStyle(""); return; }
 
-               String valorIngresado= tf.getText()== null ? "" : tf.getText().trim();
-               if (valorIngresado.isEmpty()) {
-                   tf.setStyle(""); /* limpiar si se borran*/
-                   return;
-               }
-
-
-
-              if (model.esValorCorrecto(fila, col, valorIngresado)) {
-                   tf.setStyle("-fx-background-color: #C6F6C6;");
-               } else {
-                   tf.setStyle("-fx-background-color: #FFC0B8;");
-               }
-           });
+       if (model.esValorCorrecto(fila, col, v)) {
+           tf.setStyle("-fx-background-color: #C6F6C6;");
+       } else {
+           tf.setStyle("-fx-background-color: #FFC0B8;");
        }
    }
 
-
+    /*------------------------------------------------------------------------------------------------------*/
 
     private void iniciarTabla(Parent padre){
         for (TextField tf: todasLasCeldas(padre)){
@@ -249,7 +321,6 @@ public class HelloController {
         cell.setOnMouseClicked(event->{
             /*funcion para resaltar celdas*/
             sombrearFilaColumna(padre,columna,fila);
-            System.out.println("Click en fila=" + fila + " col=" + columna);
             GridPane padree=(GridPane) cell.getParent();
 
             for (TextField tf: todasLasCeldas(padree)){
@@ -260,60 +331,6 @@ public class HelloController {
         });
     }
 
-
-    private void validarEntrada(Parent padre) {
-        for (TextField tf : todasLasCeldas(padre)) {
-            /* Evitar adjuntar dos veces el handler*/
-            if (Boolean.TRUE.equals(tf.getProperties().get("validador"))) continue;
-            tf.getProperties().put("validador", true);
-
-            tf.setOnKeyReleased(event -> {
-                String v = tf.getText();
-                if (v == null) v = "";
-                v = v.trim();
-
-                Integer r0 = (Integer) tf.getProperties().get("fila");
-                Integer c0 = (Integer) tf.getProperties().get("col");
-                if (r0 == null || c0 == null) return;
-
-                /* Limpiar colores anteriores en fila/col/bloque del entorno de esta celda*/
-                limpiarEntorno(padre, r0, c0);
-
-                if (v.isEmpty()) {
-                    tf.setStyle(""); /* si borran el número, quitamos rojo*/
-                    return;
-                }
-
-                boolean conflicto = false;
-
-                for (TextField otro : todasLasCeldas(padre)) {
-                    if (otro == tf) continue;
-
-                    Integer r = (Integer) otro.getProperties().get("fila");
-                    Integer c = (Integer) otro.getProperties().get("col");
-                    if (r == null || c == null) continue;
-
-                    boolean mismaFilaColBloque = (r == r0) || (c == c0) || mismoBloque(r, c, r0, c0);
-
-                    String valOtro = otro.getText();
-                    if (valOtro == null) valOtro = "";
-                    valOtro = valOtro.trim();
-
-                    if (mismaFilaColBloque && !valOtro.isEmpty() && v.equals(valOtro)) {
-                        /* Conflicto: marcar ambos en rojo*/
-                        otro.setStyle("-fx-background-color: #FFC0B8;");
-                        tf.setStyle("-fx-background-color: #FFC0B8;");
-                        conflicto = true;
-                    }
-                }
-
-                if (!conflicto) {
-                    /* Si no hubo conflictos, quitamos el rojo de la celda actual*/
-                    tf.setStyle("");
-                }
-            });
-        }
-    }
 
     private List<TextField> todasLasCeldas(Parent padre){
         ArrayList<TextField> listaCeldas=new ArrayList<>();
