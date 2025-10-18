@@ -21,10 +21,18 @@ public class HelloController {
     @FXML
     private Button nuevoJuego;
 
+    @FXML
+    private Button reiniciar;
+
+    @FXML
+    private Button pista;
+
     private SudokuModel model;
 
     @FXML
     public void initialize(){
+        reiniciar.setVisible(false); reiniciar.setManaged(false);
+        pista.setVisible(false); pista.setManaged(false);
         model = new SudokuModel();
         crearSudoku();
 
@@ -115,10 +123,14 @@ public class HelloController {
             limpiarTabla(gridContainer);
             iniciarTabla(gridContainer);
 
+
         } else {
             iniciarTabla(gridContainer);
             nuevoJuego.setText("Nuevo Juego");
             nuevoJuego.setStyle("-fx-pref-width:150;");
+
+            reiniciar.setManaged(true); reiniciar.setVisible(true);
+            pista.setManaged(true); pista.setVisible(true);
         }
         engancharHandlers(gridContainer);
     }
