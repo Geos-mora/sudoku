@@ -87,9 +87,12 @@
 .cell .conflict {
     -fx-background-color: #C2CCFF;
 }
-.pistaUsuario{
--fx-effect: dropshadow(gaussian, rgba(0,180,60,0.6), 12, 0.0, 0, 4);
- -fx-border-color: #00FF0C;
-  -fx-border-width:1;
-  -fx-background-color:#E0FFE7;
+
+.pistaUsuario {
+    -fx-background-color: #C2CCFF;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0.0, 0, 3);
+}
+
+.hint {
+    -fx-font-weight: bold;
 }

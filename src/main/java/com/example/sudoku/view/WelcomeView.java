@@ -6,9 +6,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class wellcomeview   extends Stage {
-    public  wellcomeview ()throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/sudoku/wellcomeGame.fxml"));
+public class WelcomeView extends Stage {
+    public WelcomeView()throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/sudoku/WelcomeGame.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 700, 500);
         this.setTitle("Sudoku");
         this.setScene(scene);

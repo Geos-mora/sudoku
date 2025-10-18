@@ -1,5 +1,7 @@
 package com.example.sudoku.model;
 
+import java.util.Random;
+
 public class SudokuModel {
     private static final int N = 6;
 
@@ -38,16 +40,41 @@ public class SudokuModel {
         regenerar();
     }
 
-    /** Regenera una nueva solución y crea el puzzle según el patrón de pistas */
     public final void regenerar() {
-        solution = SudokuGenerator.generarSudoku6x6Resuelto(); // nunca null
+
+        solution = SudokuGenerator.generarSudoku6x6Resuelto();
+
+        
+        int[][] patronRotado = rotarMatriz(PATRON_PISTAS, new Random().nextInt(4));
+
         puzzle = new int[N][N];
-        /*aqui se genera la tabla donde se recorre la tabla de las pistas y la tabla generada*/
         for (int r = 0; r < N; r++) {
             for (int c = 0; c < N; c++) {
-                puzzle[r][c] = (PATRON_PISTAS[r][c] == 0) ? 0 : solution[r][c];
+                puzzle[r][c] = (patronRotado[r][c] == 0) ? 0 : solution[r][c];
             }
         }
+    }
+
+
+    private static int[][] rotarMatriz(int[][] matriz, int veces) {
+        int[][] resultado = matriz;
+        for (int i = 0; i < veces % 4; i++) {
+            resultado = rotarMatrizUnaVez(resultado);
+        }
+        return resultado;
+    }
+
+    private static int[][] rotarMatrizUnaVez(int[][] matriz) {
+        int n = matriz.length;
+        int m = matriz[0].length;
+        int[][] rotada = new int[m][n];
+
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < m; c++) {
+                rotada[c][n - 1 - r] = matriz[r][c];
+            }
+        }
+        return rotada;
     }
 
     /* Valor que se muestra en la grilla (puzzle) */

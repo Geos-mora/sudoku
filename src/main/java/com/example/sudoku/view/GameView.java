@@ -1,5 +1,5 @@
 package com.example.sudoku.view;
 
-public class gameView {
+public class GameView {
 
 }
