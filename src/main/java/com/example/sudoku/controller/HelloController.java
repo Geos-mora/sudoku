@@ -228,6 +228,36 @@ public class HelloController {
             if (Boolean.TRUE.equals(tf.getProperties().get("validador"))) continue;
             tf.getProperties().put("validador", true);
 
+            tf.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String nuevoTexto = change.getControlNewText();
+
+
+                if (nuevoTexto.isEmpty()) {
+                    return change;
+                }
+
+
+                if (nuevoTexto.length() > 1) {
+                    mostrarErrorValidacion("Solo se permite UN dígito");
+                    return null;
+                }
+
+
+                if (!nuevoTexto.matches("[0-9]")) {
+                    mostrarErrorValidacion("Solo se permiten números");
+                    return null;
+                }
+
+
+                int numero = Integer.parseInt(nuevoTexto);
+                if (numero < 1 || numero > 6) {
+                    mostrarErrorValidacion("Solo se permiten números del 1 al 6");
+                    return null;
+                }
+
+                return change;
+            }));
+
             tf.setOnKeyReleased(e -> {
                 validarEntrada(tf, padre);/*esta funcion marcara los numeros repetifdos en la fila y en la columna y bloque*/
                 obtenerValorReal(tf);/*esta funcion solo mostrara si esta bien o mal el valor ingresado*/
@@ -263,6 +293,15 @@ public class HelloController {
         }
         if (!conflicto) tf.setStyle("");
     }
+
+    private void mostrarErrorValidacion(String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
+        alerta.setTitle("Entrada inválida");
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
+
 
 
     /*esta funcion me servira PARA obtener el valor real si el usuario escribe  mal o no la celda que acaba de editar*/
